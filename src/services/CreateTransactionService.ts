@@ -19,19 +19,10 @@ class CreateTransactionService {
       throw new Error('Wrong type');
     }
 
-    const balance = this.transactionsRepository.getBalance();
-    if (type === 'outcome') {
-      const newBalance = balance.total - value;
+    const { total } = this.transactionsRepository.getBalance();
 
-      if (newBalance < 0) throw new Error('Insufficient Funds');
-
-      const transaction = this.transactionsRepository.create({
-        title,
-        type,
-        value,
-      });
-
-      return transaction;
+    if (type === 'outcome' && total < value) {
+      throw new Error('Insufficient Funds');
     }
 
     const transaction = this.transactionsRepository.create({
